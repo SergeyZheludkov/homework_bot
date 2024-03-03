@@ -136,14 +136,9 @@ def main():
 
     timestamp = int(time.time())
 
-    #  Счетчик ошибок в функции check_response.
-    count_cr = 0
-
-    #  Счетчик ошибок в функции parse_status.
-    count_ps = 0
-
     while True:
         error_message = ''
+        sent_message_flag = True
         try:
             response_content = get_api_answer(timestamp)
             check_response(response_content)
@@ -157,22 +152,18 @@ def main():
                 logger.debug('В ответе API нет новых статусов.')
         except SendMessageError:
             error_message = 'Сбой при отправке сообщения в Telegram'
+            sent_message_flag = False
         except CheckResponseError as error:
             error_message = f'Сбой при проверке ответа API: {error}'
-            if count_cr == 0:
-                send_message(bot, error_message)
-            count_cr += 1
         except ParseError as error:
             error_message = f'Сбой при извлечении данных по домашке: {error}'
-            if count_ps == 0:
-                send_message(bot, error_message)
-            count_ps += 1
         except Exception as error:
             error_message = f'Сбой в работе программы: {error}'
-            send_message(bot, error_message)
         finally:
             if error_message:
                 logger.error(error_message)
+                if sent_message_flag:
+                    send_message(bot, error_message)
             time.sleep(RETRY_PERIOD)
 
 
