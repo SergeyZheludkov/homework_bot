@@ -10,9 +10,6 @@ import time
 from exceptions import (APIRequestError, CheckResponseError,
                         ParseError, SendMessageError)
 
-# logging.basicConfig(level=logging.DEBUG,
-#                     format='%(asctime)s [%(levelname)s] %(message)s')
-
 # Создаем отдельный логгер для модуля
 logger = logging.getLogger(__name__)
 
